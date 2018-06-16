@@ -2,7 +2,12 @@
 
 static bool shouldRemoveBelowScreen(shared_ptr<ofxBox2dBaseShape> shape)
 {
-  return shape.get()->getPosition().y > ofGetHeight();
+  ofApp::FallingCircle *fc = dynamic_cast<ofApp::FallingCircle*>(shape.get());
+  if (fc)
+  {
+    return fc->getPosition().y - fc->getRadius() > ofGetHeight();
+  }
+  return true;
 }
 
 //--------------------------------------------------------------
@@ -36,6 +41,7 @@ void ofApp::setup(){
 	near_threshold_ = 255;
 	far_threshold_ = 178;
   radius_max_ = 50;
+  max_num_circles_ = 200;
 
 	ofSetFrameRate(60);
 
@@ -52,7 +58,7 @@ void ofApp::update(){
 	box2d_.update();
 	kinect_.update();
 
-  const int max_num_circles = 200;
+  const int max_num_circles = 100;
   if (circles_.size() < max_num_circles)
   {
     shared_ptr<FallingCircle> circle(new FallingCircle());
@@ -89,12 +95,15 @@ void ofApp::update(){
     const int max_area = kinect_.width * kinect_.height / 2.0;
     const int max_num_blobs = 10;
     const bool find_holes = false;
-    const bool approximate = false;
+    const bool approximate = true;
 		contour_finder_.findContours(gray_image_, min_area, max_area, max_num_blobs, find_holes, approximate);
 
     edge_lines_.clear();
 
     // TODO resize to screen
+    float x_scale = 1.0f * ofGetWidth() / gray_image_.width;
+    float y_scale = 1.0f * ofGetHeight() / gray_image_.height;
+    float scale = std::max(x_scale, y_scale);
     for (size_t i = 0; i < contour_finder_.blobs.size(); ++i)
     {
       const ofxCvBlob &blob = contour_finder_.blobs[i];
@@ -102,8 +111,8 @@ void ofApp::update(){
       for (size_t p = 0; p < blob.pts.size(); ++p)
       {
         const ofDefaultVec3 pt = blob.pts[p];
-        vertices[p].x = pt.x * 4;
-        vertices[p].y = pt.y * 4;
+        vertices[p].x = pt.x * scale;
+        vertices[p].y = pt.y * scale;
       }
       shared_ptr<ofxBox2dEdge> edge(new ofxBox2dEdge());
       edge->addVertexes(vertices);
@@ -121,7 +130,7 @@ void ofApp::draw(){
 
   // draw from the live kinect
   //kinect_.drawDepth(10, 10, 400, 300);
-  //kinect_.draw(420, 10, 400, 300);
+  //kinect_.draw(0, 0, 400, 300);
 
   //gray_image_.draw(10, 320, 400, 300);
   //contour_finder_.draw(10, 320, 400, 300);
@@ -158,41 +167,50 @@ void ofApp::draw(){
 	for (size_t i = 0; i < circles_.size(); i++)
   {
 		ofFill();
-		ofSetHexColor(0x90d4e3);
 		circles_[i]->draw();
 	}
 
+  ofPushStyle();
+  ofFill();
+  ofSetLineWidth(5.0);
+  ofSetHexColor(0xcccccc);
 	for (size_t i = 0; i < edge_lines_.size(); i++)
   {
-		ofFill();
-		ofSetHexColor(0xcccccc);
 		edge_lines_[i]->draw();
 	}
+  ofPopStyle();
 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed (int key) {
 	switch (key) {
-		case '>':
-		case '.':
+
+		case '+':
+      max_num_circles_ += 10;
+      break;
+
+		case '-':
+      max_num_circles_ -= 10;
+      if (max_num_circles_ < 10) max_num_circles_ = 10;
+      break;
+
+		case 'F':
 			far_threshold_++;
 			if (far_threshold_ > 255) far_threshold_ = 255;
 			break;
 
-		case '<':
-		case ',':
+		case 'f':
 			far_threshold_ --;
 			if (far_threshold_ < 0) far_threshold_ = 0;
 			break;
 
-		case '+':
-		case '=':
+    case 'N':
 			near_threshold_ ++;
 			if (near_threshold_ > 255) near_threshold_ = 255;
 			break;
 
-		case '-':
+		case 'n':
 			near_threshold_ --;
 			if (near_threshold_ < 0) near_threshold_ = 0;
 			break;
@@ -206,14 +224,13 @@ void ofApp::keyPressed (int key) {
 			kinect_.open();
 			break;
 
-		case 'f':
+		case ' ':
       ofToggleFullscreen();
 			break;
 
 		case 'r':
       radius_max_ -= 5;
       if (radius_max_ < 5) radius_max_ = 5;
-      std::cout << ofGetLastFrameTime() << std::endl;
       break;
 
 		case 'R':

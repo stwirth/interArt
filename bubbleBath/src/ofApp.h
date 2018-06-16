@@ -87,4 +87,7 @@ private:
 	ofxBox2d box2d_;           // the box2d world
 	vector<shared_ptr<ofxBox2dEdge> > edge_lines_;   // the box2d edge/line shape (min 2 points)
 	vector<shared_ptr<FallingCircle> > circles_;
+  int max_num_circles_;
+
 };
+
