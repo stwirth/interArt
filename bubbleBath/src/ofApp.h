@@ -78,8 +78,6 @@ private:
   ofxCvGrayscaleImage gray_thresh_near_; // the near thresholded image
   ofxCvGrayscaleImage gray_thresh_far_; // the far thresholded image
 
-  ofxCvContourFinder contour_finder_;
-
   bool show_parameter_gui_;
 	ofxPanel parameter_gui_;
 	ofParameter<int> near_threshold_;
