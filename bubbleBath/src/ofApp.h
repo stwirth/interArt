@@ -4,6 +4,7 @@
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
 #include "ofxBox2d.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -51,23 +52,24 @@ public:
   };
 
   void setup();
+
   void update();
+
   void draw();
+
+  void setPolygonsFromBlobs(const std::vector<ofxCvBlob> &blobs, float scale_factor);
+
+  static ofPolyline cvBlobToSimplePolyline(const ofxCvBlob &blob, float scale_factor);
+
+  void setEdgesFromBlobs(const std::vector<ofxCvBlob> &blobs, float scale_factor);
+
   void exit();
 
   void keyPressed(int key);
-  void keyReleased(int key);
-  void mouseMoved(int x, int y );
-  void mouseDragged(int x, int y, int button);
-  void mousePressed(int x, int y, int button);
-  void mouseReleased(int x, int y, int button);
-  void mouseEntered(int x, int y);
-  void mouseExited(int x, int y);
-  void windowResized(int w, int h);
-  void dragEvent(ofDragInfo dragInfo);
-  void gotMessage(ofMessage msg);
 
 private:
+
+  void tiltAngleChanged(int &angle);
 
   ofxKinect kinect_;
   ofxCvColorImage color_image_;
@@ -78,16 +80,28 @@ private:
 
   ofxCvContourFinder contour_finder_;
 
-	int near_threshold_;
-	int far_threshold_;
-  int radius_max_;
+  bool show_parameter_gui_;
+	ofxPanel parameter_gui_;
+	ofParameter<int> near_threshold_;
+	ofParameter<int> far_threshold_;
+  ofParameter<int> min_radius_;
+  ofParameter<int> max_radius_;
+  ofParameter<int> max_num_circles_;
+  ofParameter<float> line_width_;
+  ofParameter<float> density_;
+  ofParameter<float> bounce_;
+  ofParameter<float> friction_;
+  ofParameter<bool> draw_depth_;
+  ofParameter<bool> draw_rgb_;
+  ofParameter<bool> draw_gray_;
+  ofParameter<bool> use_polygons_;
 
-	int tilt_angle_;
+	ofParameter<int> tilt_angle_;
 
-	ofxBox2d box2d_;           // the box2d world
-	vector<shared_ptr<ofxBox2dEdge> > edge_lines_;   // the box2d edge/line shape (min 2 points)
+	ofxBox2d box2d_;
+	vector<shared_ptr<ofxBox2dPolygon> > polygons_;
+  vector<shared_ptr<ofxBox2dEdge> > edges_;
 	vector<shared_ptr<FallingCircle> > circles_;
-  int max_num_circles_;
 
 };
 
