@@ -93,6 +93,7 @@ private:
   ofParameter<bool> draw_rgb_;
   ofParameter<bool> draw_gray_;
   ofParameter<bool> use_polygons_;
+  ofParameter<bool> mirror_image_;
 
 	ofParameter<int> tilt_angle_;
 

@@ -20,7 +20,7 @@ void ofApp::setup(){
   parameter_gui_.add(far_threshold_.set("far_threshold (f/F)", 178, 0, 255));
   parameter_gui_.add(min_radius_.set("min_radius", 5, 1, 200));
   parameter_gui_.add(max_radius_.set("max_radius (r/R)", 100, 5, 200));
-  parameter_gui_.add(max_num_circles_.set("max_num_circles (+/-)", 400, 5, 500));
+  parameter_gui_.add(max_num_circles_.set("max_num_circles (+/-)", 200, 5, 500));
   parameter_gui_.add(line_width_.set("line_width", 2.0, 0.5, 10.0));
   parameter_gui_.add(density_.set("density", 3.0, 0.0, 10.0));
   parameter_gui_.add(bounce_.set("bounce", 0.53, 0.0, 1.0));
@@ -30,6 +30,7 @@ void ofApp::setup(){
   parameter_gui_.add(draw_rgb_.set("draw_rgb", false));
   parameter_gui_.add(draw_gray_.set("draw_gray", false));
   parameter_gui_.add(use_polygons_.set("use_polygons", false));
+  parameter_gui_.add(mirror_image_.set("mirro_image", true));
   show_parameter_gui_ = false;
 
 	tilt_angle_.addListener(this, &ofApp::tiltAngleChanged);
@@ -84,6 +85,12 @@ void ofApp::update(){
 
 		// load grayscale depth image from the kinect source
 		gray_image_.setFromPixels(kinect_.getDepthPixels());
+
+    if (mirror_image_) {
+      bool flip_horizontally = true;
+      bool flip_vertically = false;
+      gray_image_.mirror(flip_vertically, flip_horizontally);
+    }
 
     gray_thresh_near_ = gray_image_;
     gray_thresh_far_ = gray_image_;
@@ -168,17 +175,17 @@ void ofApp::draw(){
   ofPushStyle();
   ofFill();
   ofSetLineWidth(line_width_);
-  ofSetHexColor(0xcccccc);
+  ofSetHexColor(0xffffff);
 	for (size_t i = 0; i < polygons_.size(); i++)
   {
 		polygons_[i]->draw();
 	}
-  ofPopStyle();
 
 	for (size_t i = 0; i < edges_.size(); i++)
   {
 		edges_[i]->draw();
 	}
+  ofPopStyle();
 
   if (draw_depth_) {
     kinect_.drawDepth(10, 10, 400, 300);
