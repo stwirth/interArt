@@ -24,9 +24,11 @@ class TimeWindow
 
   void setHistoryLength(double secs);
 
+  double getHistoryLength() const;
+
   void setFractionOpen(double fraction);
 
-  void setOpenDuration(double secs);
+  void setSwitchInterval(double secs);
 
  private:
 
@@ -34,14 +36,14 @@ class TimeWindow
 
   void allocateFrames();
 
-  int num_rows_;
-  int num_cols_;
+  int num_rows_ = 6;
+  int num_cols_ = 8;
 
   std::vector<std::shared_ptr<Frame>> frames_;
 
   TimeLine time_line_;
 
-  double open_duration_;
+  double switch_interval_ = 2.0;
   std::chrono::time_point<std::chrono::steady_clock> last_switch_time_;
 
 };

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cstdlib>
 
-Frame::Frame(const TimeLine &time_line) : time_line_(time_line)
+Frame::Frame(const TimeLine &time_line) : time_line_(time_line), is_open_(false)
 {
   std::srand(std::time(0));
 }
@@ -17,7 +17,6 @@ void Frame::draw(int x, int y, int width, int height)
     std::shared_ptr<Image> image = time_line_.getImageFromPast(time_offset_);
     if (image) {
       image->draw(x, y, width, height);
-      std::cout << "Painting image " << image.get() << " with age " << image->getAge() <<  std::endl;
     }
   } else {
     // TODO paint color

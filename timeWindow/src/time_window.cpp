@@ -6,8 +6,6 @@
 
 TimeWindow::TimeWindow()
 {
-  num_rows_ = 3;
-  num_cols_ = 4;
   allocateFrames();
   last_switch_time_ = std::chrono::steady_clock::now();
   std::srand(std::time(0));
@@ -44,7 +42,7 @@ void TimeWindow::allocateFrames()
 void TimeWindow::update()
 {
   double secs = getSecondsSinceLastSwitch();
-  if (secs > 4.0)
+  if (secs > switch_interval_)
   {
     int frame_index = std::rand() % frames_.size();
     if (frames_[frame_index]->isOpen()) {
@@ -92,6 +90,11 @@ void TimeWindow::setHistoryLength(double secs)
   }
 }
 
+double TimeWindow::getHistoryLength() const
+{
+  return time_line_.getTargetHistoryLength();
+}
+
 void TimeWindow::setFractionOpen(double fraction)
 {
   if (fraction >= 0.0 && fraction <= 1.0) {
@@ -113,7 +116,7 @@ void TimeWindow::setFractionOpen(double fraction)
   }
 }
 
-void TimeWindow::setOpenDuration(double secs) {
-  open_duration_ = secs;
+void TimeWindow::setSwitchInterval(double secs) {
+  switch_interval_ = secs;
 }
 

@@ -9,8 +9,6 @@ void TimeLine::addImage(std::shared_ptr<Image> &image)
   removeOldImages();
   auto last_image = *(images_.rbegin());
   auto first_image = *(images_.begin());
-  std::cout << "timeline has " << images_.size() << " images of ages from "
-    << last_image->getAge() << " to " << first_image->getAge() << std::endl;
 }
 
 void TimeLine::removeOldImages()

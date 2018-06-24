@@ -1,5 +1,6 @@
 #include "ofApp.h"
 #include "of_camera.h"
+#include "of_kinect_camera.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -9,7 +10,8 @@ void ofApp::setup(){
 	parameter_gui_.setup("Parameters");
   show_parameter_gui_ = false;
 
-  camera_.reset(new OfCamera());
+  //camera_.reset(new OfCamera());
+  camera_.reset(new OfKinectCamera());
 
 	ofSetFrameRate(60);
 
@@ -46,6 +48,11 @@ void ofApp::keyPressed (int key) {
 		case 'm':
       show_parameter_gui_ = !show_parameter_gui_;
 			break;
+
+		case ' ':
+      ofToggleFullscreen();
+			break;
+
 	}
 }
 

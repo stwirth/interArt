@@ -15,7 +15,7 @@ class TimeLine
   void addImage(std::shared_ptr<Image> &image);
 
   /**
-   * @returns null pointer if secs is outside time line.
+   * @returns null_ptr if secs is outside time line.
    */
   std::shared_ptr<Image> getImageFromPast(double secs) const;
 
@@ -30,7 +30,7 @@ class TimeLine
 
   void removeOldImages();
 
-  double target_history_length_ = 30.0;
+  double target_history_length_ = 60.0; // seconds
 
   std::deque<std::shared_ptr<Image>> images_;
 
